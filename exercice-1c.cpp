@@ -35,21 +35,21 @@ void write_postamble_svg(std::ofstream& f)
     f << "</svg>\n";
 }
 
-void write_pips(std::ofstream& f, int n, int cx, int cy, int offset)
+void write_pips(std::ofstream& f, int n, int cx, int cy)
 {
     const int r = 6;
     const int half = DOMINO_SIDE / 2;
-    const int dx = half / 2;
-    const int dy = half / 2;
-    int x_left   = cx - dx;
-    int x_right  = cx + dx;
-    int y_top    = cy - half + dy + offset;
-    int y_bottom = cy + offset + dy;
-    int y_mid    = cy + offset + dy / 2;
+    const int gap = half / 2;
+    int x_left  = cx - gap;
+    int x_mid   = cx;
+    int x_right = cx + gap;
+    int y_top   = cy - gap;
+    int y_mid   = cy;
+    int y_bottom= cy + gap;
 
     switch (n) {
     case 1:
-        f << "  <circle cx=\"" << cx << "\" cy=\"" << cy + offset
+        f << "  <circle cx=\"" << x_mid << "\" cy=\"" << y_mid
           << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
         break;
     case 2:
@@ -59,7 +59,7 @@ void write_pips(std::ofstream& f, int n, int cx, int cy, int offset)
           << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
         break;
     case 3:
-        f << "  <circle cx=\"" << cx << "\" cy=\"" << cy + offset
+        f << "  <circle cx=\"" << x_mid << "\" cy=\"" << y_mid
           << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
         f << "  <circle cx=\"" << x_left << "\" cy=\"" << y_top
           << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
@@ -77,7 +77,7 @@ void write_pips(std::ofstream& f, int n, int cx, int cy, int offset)
           << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
         break;
     case 5:
-        f << "  <circle cx=\"" << cx << "\" cy=\"" << cy + offset
+        f << "  <circle cx=\"" << x_mid << "\" cy=\"" << y_mid
           << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
         f << "  <circle cx=\"" << x_left << "\" cy=\"" << y_top
           << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
@@ -89,17 +89,22 @@ void write_pips(std::ofstream& f, int n, int cx, int cy, int offset)
           << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
         break;
     case 6:
-        for (int i = -1; i <= 1; ++i) {
-            f << "  <circle cx=\"" << x_left + (i+1)*dx << "\" cy=\""
-              << y_top << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP
-              << "\" />\n";
-            f << "  <circle cx=\"" << x_left + (i+1)*dx << "\" cy=\""
-              << y_bottom << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP
-              << "\" />\n";
-        }
+        f << "  <circle cx=\"" << x_left << "\" cy=\"" << y_top
+          << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
+        f << "  <circle cx=\"" << x_mid << "\" cy=\"" << y_top
+          << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
+        f << "  <circle cx=\"" << x_right << "\" cy=\"" << y_top
+          << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
+        f << "  <circle cx=\"" << x_left << "\" cy=\"" << y_bottom
+          << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
+        f << "  <circle cx=\"" << x_mid << "\" cy=\"" << y_bottom
+          << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
+        f << "  <circle cx=\"" << x_right << "\" cy=\"" << y_bottom
+          << "\" r=\"" << r << "\" fill=\"" << COLOR_PIP << "\" />\n";
         break;
     }
 }
+
 
 // ----------------------
 // 3. Écrit un domino
@@ -132,11 +137,13 @@ void write_domino_svg(std::ofstream& f, int a, int b, bool vertical,
     f << "  <circle cx=\"" << cx << "\" cy=\"" << cy
       << "\" r=\"4\" fill=\"" << COLOR_PIP << "\" />\n";
     if (vertical) {
-        write_pips(f, a, cx, cy - DOMINO_SIDE / 2, -DOMINO_SIDE / 2);
-        write_pips(f, b, cx, cy + DOMINO_SIDE / 2, +DOMINO_SIDE / 2);
+        write_pips(f, a, cx, cy - DOMINO_SIDE / 2);
+        write_pips(f, b, cx, cy + DOMINO_SIDE / 2);
+
     } else {
-        write_pips(f, a, cx - DOMINO_SIDE / 2, cy, -DOMINO_SIDE / 2);
-        write_pips(f, b, cx + DOMINO_SIDE / 2, cy, +DOMINO_SIDE / 2);
+        write_pips(f, a, cx, cy - DOMINO_SIDE / 2);
+        write_pips(f, b, cx, cy + DOMINO_SIDE / 2);
+
     }
 }
 
